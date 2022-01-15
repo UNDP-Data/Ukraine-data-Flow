@@ -11,8 +11,8 @@ To install the project, sinply clone the the repo and them run `npm install` in 
 Run the terminal or command prompt and then run the following
 
 ```
-git clone https://github.com/UNDP-Data/Access-All-Data-Viz.git
-cd Access-All-Data-Viz
+git clone https://github.com/UNDP-Data/DataViz-Template
+cd DataViz-Template
 npm install
 ```
 ### Local Development
@@ -70,10 +70,13 @@ Craco is used to add a cofiguration layer for CRA. The primary function is to st
 * `npm run start`: Executes `craco start` and start the local server for local deployment.
 * `npm install`: Installs all the dependencies.
 
-## Packages/Library Used
+## Packages/Library
 
+__Packages/Library Used__
 * __React__: React is used as MVC framework.
 * __CRACO__: Craco is used to configure different scripts (See Available Scripts for more details)
+
+__Some Suggestions for Libraries__
 * __styled-components__: Utilises tagged template literals  and the power of CSS, allows to write actual CSS code to style the components in JS/TS.
 * __Various D3 Libraries__: Various D3 libraries are used for visualizations, adding interaction and reading the csv data file.
 * __react-dropdown-select__: Is a dropdown library used for creating different dropdowns.
