@@ -1,4 +1,4 @@
-# Access All Data Visualization in DFP
+# Template for Building Data Visualization in DFP
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app) and uses [Craco](https://www.npmjs.com/package/@craco/craco) to add a configuration layer for CRA. For this porject, we use [Typescript](https://www.typescriptlang.org/), a strongly typed programming language that builds on JavaScript. Typescript helps in better documentation of the code and communication between developers.
 
