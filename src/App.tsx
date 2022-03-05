@@ -120,6 +120,17 @@ const GlobalStyle = createGlobalStyle`
     font-size: 2rem !important;
     font-weight: 'medium';
   }
+  @-webkit-keyframes dash {
+    to {
+      stroke-dashoffset: 1000;
+    }
+  }
+
+  .path {
+    -webkit-animation: dash 30s linear infinite;
+    stroke-dasharray: 10,1;
+  }
+
 `;
 
 const VizAreaEl = styled.div`

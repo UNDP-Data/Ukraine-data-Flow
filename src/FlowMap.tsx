@@ -229,11 +229,12 @@ export const FlowMap = () => {
               const center = projection([d['Longitude (average)'], d['Latitude (average)']]) as [number, number];
               return (
                 <line
-                  x2={center[0]}
-                  y2={center[1]}
-                  x1={UKRCenter[0]}
-                  y1={UKRCenter[1]}
+                  x2={tradeType === 'Imports' ? center[0] : UKRCenter[0]}
+                  y2={tradeType === 'Imports' ? center[1] : UKRCenter[1]}
+                  x1={tradeType === 'Imports' ? UKRCenter[0] : center[0]}
+                  y1={tradeType === 'Imports' ? UKRCenter[1] : center[1]}
                   key={i}
+                  className='path'
                   fill='none'
                   stroke='#006EB5'
                   opacity={hoverData ? hoverData.countryISO === d['Alpha-3 code-1'] ? 1 : 0.2 : 1}
