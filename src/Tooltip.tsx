@@ -98,6 +98,7 @@ export const Tooltip = (props: Props) => {
   const dataAllProducts = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] === 'All Products');
   const dataCategories = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] !== 'All Products');
   const dataSorted = orderBy(dataCategories, data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)', 'desc').filter((d, i) => i < 5);
+  const percent = (dataSelectedCategory[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 100) / dataAllProducts[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'];
   return (
     <TooltipEl x={data.xPosition} y={data.yPosition}>
       <TooltipHead>
@@ -144,7 +145,7 @@ export const Tooltip = (props: Props) => {
               makes
               {' '}
               <span className='bold'>
-                {format('.3s')((dataSelectedCategory[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 100) / dataAllProducts[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'])}
+                { percent < 1 ? percent.toFixed(2) : format('.3s')(percent)}
                 %
               </span>
               {' '}

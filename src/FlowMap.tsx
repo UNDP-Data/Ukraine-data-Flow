@@ -49,7 +49,7 @@ const NEIGHBOURS = [
 
 export const FlowMap = () => {
   const svgWidth = 960;
-  const svgHeight = 678;
+  const svgHeight = 565;
   const mapSvg = useRef<SVGSVGElement>(null);
   const mapG = useRef<SVGGElement>(null);
 
@@ -76,14 +76,14 @@ export const FlowMap = () => {
           showSearch
           style={
             {
-              width: '33%',
+              minWidth: '25%',
               marginRight: '20px',
               fontSize: '1.6rem',
               fontWeight: 'bold',
             }
           }
           value={productGroup}
-          size='large'
+          size='middle'
           onChange={(d) => { setProductGroup(d); }}
         >
           {
@@ -96,7 +96,7 @@ export const FlowMap = () => {
           <Radio.Group
             defaultValue='Neighbours'
             buttonStyle='solid'
-            size='large'
+            size='middle'
             onChange={(e) => { setRegionType(e.target.value); }}
             style={
               {
@@ -110,7 +110,7 @@ export const FlowMap = () => {
           <Radio.Group
             defaultValue='Exports'
             buttonStyle='solid'
-            size='large'
+            size='middle'
             onChange={(e) => { setTradeType(e.target.value); }}
           >
             <Radio.Button value='Exports'>Exports from Ukraine</Radio.Button>

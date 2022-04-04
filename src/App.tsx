@@ -1,5 +1,7 @@
 import styled, { createGlobalStyle } from 'styled-components';
 import { FlowMap } from './FlowMap';
+import { ChoroplethMap } from './ChoroplethMap';
+import { PetroChoroplethMap } from './PetroChoroplethMap';
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -145,6 +147,24 @@ const App = () => (
     <GlobalStyle />
     <VizAreaEl>
       <FlowMap />
+    </VizAreaEl>
+  </>
+);
+
+export const App1 = () => (
+  <>
+    <GlobalStyle />
+    <VizAreaEl>
+      <ChoroplethMap />
+    </VizAreaEl>
+  </>
+);
+
+export const App2 = () => (
+  <>
+    <GlobalStyle />
+    <VizAreaEl>
+      <PetroChoroplethMap />
     </VizAreaEl>
   </>
 );
