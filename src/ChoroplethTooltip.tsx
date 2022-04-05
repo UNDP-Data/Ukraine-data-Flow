@@ -57,6 +57,12 @@ const BodyTitleEl = styled.div`
   line-height: 2.2rem;
 `;
 
+const ProductTile = styled.div`
+  font-size: 1.6rem;
+  color: var(--primary-blue);
+  margin-bottom: 0.5rem;
+`;
+
 export const ChoroplethTooltip = (props: Props) => {
   const {
     data,
@@ -73,30 +79,23 @@ export const ChoroplethTooltip = (props: Props) => {
           : (
             <TooltipBody>
               <BodyTitleEl>
-                In
-                {' '}
-                {data.year}
-                ,
-                {' '}
-                <span className='bold'>
-                  {data.percent.toFixed(2)}
-                  % (
-                  {format('$.3s')(data.value * 1000).replace('G', 'B')}
-                  )
+                <ProductTile className='bold'>{data.productGroup}</ProductTile>
+                <div>
+                  {data.exporter === 'Both' ? "Russia's and Ukraine's" : `${data.exporter}'s`}
                   {' '}
-                </span>
-                {' '}
-                of total
-                {' '}
-                <span className='bold'>{data.productGroup}</span>
-                {' '}
-                imports by
-                {' '}
-                <span className='bold'>{data.country}</span>
-                {' '}
-                is from
-                {' '}
-                {data.exporter === 'Both' ? 'Russia and Ukraine' : data.exporter}
+                  share of import in
+                  {' '}
+                  {data.country}
+                  :
+                  {' '}
+                  <span className='bold'>
+                    {data.percent.toFixed(2)}
+                    % (
+                    {format('$.3s')(data.value * 1000).replace('G', 'B')}
+                    )
+                    {' '}
+                  </span>
+                </div>
               </BodyTitleEl>
             </TooltipBody>
           )
