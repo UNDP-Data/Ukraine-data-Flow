@@ -73,6 +73,11 @@ export const ChoroplethTooltip = (props: Props) => {
           : (
             <TooltipBody>
               <BodyTitleEl>
+                In
+                {' '}
+                {data.year}
+                ,
+                {' '}
                 <span className='bold'>
                   {data.percent.toFixed(2)}
                   % (
@@ -83,11 +88,11 @@ export const ChoroplethTooltip = (props: Props) => {
                 {' '}
                 of total
                 {' '}
-                {data.productGroup}
+                <span className='bold'>{data.productGroup}</span>
                 {' '}
                 imports by
                 {' '}
-                {data.country}
+                <span className='bold'>{data.country}</span>
                 {' '}
                 is from
                 {' '}

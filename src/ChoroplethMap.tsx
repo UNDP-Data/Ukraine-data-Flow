@@ -5,21 +5,21 @@ import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { scaleThreshold } from 'd3-scale';
 import { Radio, Select } from 'antd';
-import UKRCerealImportData from './Data/ukrCerealExport.json';
-import RUSCerealImportData from './Data/rusCerealExport.json';
-import totalCerealImportData from './Data/totalCerealImportData.json';
-import UKRWheatImportData from './Data/ukrWheatExport.json';
-import RUSWheatImportData from './Data/rusWheatExport.json';
-import totalWheatImportData from './Data/totalWheatImportData.json';
-import UKRMaizeImportData from './Data/ukrMaizeExport.json';
-import RUSMaizeImportData from './Data/rusMaizeExport.json';
-import totalMaizeImportData from './Data/totalMaizeImportData.json';
-import UKRSunflowerImportData from './Data/ukrSunflowerExport.json';
-import RUSSunflowerImportData from './Data/rusSunflowerExport.json';
-import totalSunflowerImportData from './Data/totalSunflowerImportData.json';
+import UKRCerealImportData from './Data/UkraineExports/AllCereals.json';
+import RUSCerealImportData from './Data/RussiaExport/AllCereals.json';
+import totalCerealImportData from './Data/TotalImports/AllCereal.json';
+import UKRWheatImportData from './Data/UkraineExports/Wheat.json';
+import RUSWheatImportData from './Data/RussiaExport/Wheat.json';
+import totalWheatImportData from './Data/TotalImports/Wheat.json';
+import UKRMaizeImportData from './Data/UkraineExports/Maize.json';
+import RUSMaizeImportData from './Data/RussiaExport/Maize.json';
+import totalMaizeImportData from './Data/TotalImports/Maize.json';
+import UKRSunflowerImportData from './Data/UkraineExports/SunflowerSeeds.json';
+import RUSSunflowerImportData from './Data/RussiaExport/SunflowerSeeds.json';
+import totalSunflowerImportData from './Data/TotalImports/SunflowerSeeds.json';
 import WorldMap from './Data/worldFull.json';
 import 'antd/dist/antd.css';
-import { ChoroplethHoverDataType } from './Types';
+import { ChoroplethHoverDataType, DataType, ImportDataType } from './Types';
 import { ChoroplethTooltip } from './ChoroplethTooltip';
 
 const El = styled.div`
@@ -29,7 +29,102 @@ const El = styled.div`
 const SelectEl = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 `;
+
+const OptionTitle = styled.div`
+  font-size: 1.4rem;
+`;
+
+const RightContainer = styled.div`
+  display: flex;
+  div:first-of-type{
+    margin-right: 2rem;
+  }
+  @media (max-width: 1024px) {
+    margin-top: 2rem;
+  }
+  @media (max-width: 700px) {
+    flex-wrap: wrap;
+  }
+
+`;
+
+const RightEl = styled.div`
+  @media (max-width: 700px) {
+    margin-top: 2rem;
+  }
+`;
+
+const formatData = (total: ImportDataType[], ukr: ImportDataType[], rus: any) => {
+  const dataMissing: string[] = [];
+  ukr.forEach((d: { country: string; }) => {
+    if (rus.findIndex((el: { country: any; }) => el.country === d.country) === -1) dataMissing.push(d.country);
+  });
+  const data: DataType[] = rus.map((d: any) => {
+    const totalImp = total[total.findIndex((el: { country: any; }) => el.country === d.country)];
+    const rusPercent2018 = totalImp['2018'] === 0 ? 0 : (d['2018'] * 100) / totalImp['2018'];
+    const ukrValue2018 = ukr.findIndex((el: { country: any; }) => el.country === d.country) !== -1 ? ukr[ukr.findIndex((el: { country: any; }) => el.country === d.country)]['2018'] : 0;
+    const rusPercent2019 = totalImp['2019'] === 0 ? 0 : (d['2019'] * 100) / totalImp['2019'];
+    const ukrValue2019 = ukr.findIndex((el: { country: any; }) => el.country === d.country) !== -1 ? ukr[ukr.findIndex((el: { country: any; }) => el.country === d.country)]['2019'] : 0;
+    const rusPercent2020 = totalImp['2020'] === 0 ? 0 : (d['2020'] * 100) / totalImp['2020'];
+    const ukrValue2020 = ukr.findIndex((el: { country: any; }) => el.country === d.country) !== -1 ? ukr[ukr.findIndex((el: { country: any; }) => el.country === d.country)]['2020'] : 0;
+    return {
+      country: d.country,
+      value: {
+        2018: {
+          rusValue: d['2018'],
+          rusPercent: rusPercent2018,
+          ukrValue: ukrValue2018,
+          ukrPercent: totalImp['2018'] === 0 ? 0 : (ukrValue2018 * 100) / totalImp['2018'],
+        },
+        2019: {
+          rusValue: d['2019'],
+          rusPercent: rusPercent2019,
+          ukrValue: ukrValue2019,
+          ukrPercent: totalImp['2019'] === 0 ? 0 : (ukrValue2019 * 100) / totalImp['2019'],
+        },
+        2020: {
+          rusValue: d['2020'],
+          rusPercent: rusPercent2020,
+          ukrValue: ukrValue2020,
+          ukrPercent: totalImp['2020'] === 0 ? 0 : (ukrValue2020 * 100) / totalImp['2020'],
+        },
+      },
+    };
+  });
+
+  dataMissing.forEach((d) => {
+    const indx = ukr.findIndex((el: { country: string; }) => el.country === d);
+    const totalImp = total[total.findIndex((el: { country: string; }) => el.country === d)];
+    data.push({
+      country: d,
+      value: {
+        2018: {
+          rusValue: 0,
+          rusPercent: 0,
+          ukrValue: ukr[indx]['2018'],
+          ukrPercent: totalImp['2018'] === 0 ? 0 : (ukr[indx]['2018'] * 100) / totalImp['2018'],
+        },
+        2019: {
+          rusValue: 0,
+          rusPercent: 0,
+          ukrValue: ukr[indx]['2019'],
+          ukrPercent: totalImp['2019'] === 0 ? 0 : (ukr[indx]['2019'] * 100) / totalImp['2019'],
+        },
+        2020: {
+          rusValue: 0,
+          rusPercent: 0,
+          ukrValue: ukr[indx]['2020'],
+          ukrPercent: totalImp['2020'] === 0 ? 0 : (ukr[indx]['2020'] * 100) / totalImp['2020'],
+        },
+      },
+    });
+  });
+
+  return data;
+};
 
 export const ChoroplethMap = () => {
   const svgWidth = 960;
@@ -37,128 +132,18 @@ export const ChoroplethMap = () => {
   const mapSvg = useRef<SVGSVGElement>(null);
   const mapG = useRef<SVGGElement>(null);
   const [hoverData, setHoverData] = useState<ChoroplethHoverDataType | undefined>(undefined);
-  const [productGroup, setProductGroup] = useState('All Cereals');
+  const [productGroup, setProductGroup] = useState('Wheat and Meslin');
   const [country, setCountry] = useState('Both');
+  const [year, setYear] = useState<'2018' | '2019' | '2020'>('2020');
 
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
 
   const projection = geoEqualEarth().rotate([0, 0]).scale(200).translate([450, 300]);
 
-  const CerealDataMissing: string[] = [];
-  UKRCerealImportData.forEach((d) => {
-    if (RUSCerealImportData.findIndex((el) => el.country === d.country) === -1) CerealDataMissing.push(d.country);
-  });
-  const CerealData = RUSCerealImportData.map((d) => {
-    const totalImp = totalCerealImportData[totalCerealImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
-    const ukrValue = UKRCerealImportData.findIndex((el) => el.country === d.country) !== -1 ? UKRCerealImportData[UKRCerealImportData.findIndex((el) => el.country === d.country)].value : 0;
-    return {
-      country: d.country,
-      rusValue: d.value,
-      ukrValue,
-      rusPercent,
-      ukrPercent: (ukrValue * 100) / totalImp,
-    };
-  });
-
-  CerealDataMissing.forEach((d) => {
-    const indx = UKRCerealImportData.findIndex((el) => el.country === d);
-    const totalImp = totalCerealImportData[totalCerealImportData.findIndex((el) => el.country === d)].value;
-    CerealData.push({
-      country: d,
-      rusValue: 0,
-      ukrValue: UKRCerealImportData[indx].value,
-      rusPercent: 0,
-      ukrPercent: (UKRCerealImportData[indx].value * 100) / totalImp,
-    });
-  });
-
-  const MaizeDataMissing: string[] = [];
-  UKRMaizeImportData.forEach((d) => {
-    if (RUSMaizeImportData.findIndex((el) => el.country === d.country) === -1) MaizeDataMissing.push(d.country);
-  });
-  const MaizeData = RUSMaizeImportData.map((d) => {
-    const totalImp = totalMaizeImportData[totalMaizeImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
-    const ukrValue = UKRMaizeImportData.findIndex((el) => el.country === d.country) !== -1 ? UKRMaizeImportData[UKRMaizeImportData.findIndex((el) => el.country === d.country)].value : 0;
-    return {
-      country: d.country,
-      rusValue: d.value,
-      ukrValue,
-      rusPercent,
-      ukrPercent: (ukrValue * 100) / totalImp,
-    };
-  });
-
-  MaizeDataMissing.forEach((d) => {
-    const indx = UKRMaizeImportData.findIndex((el) => el.country === d);
-    const totalImp = totalMaizeImportData[totalMaizeImportData.findIndex((el) => el.country === d)].value;
-    MaizeData.push({
-      country: d,
-      rusValue: 0,
-      ukrValue: UKRMaizeImportData[indx].value,
-      rusPercent: 0,
-      ukrPercent: (UKRMaizeImportData[indx].value * 100) / totalImp,
-    });
-  });
-
-  const WheatDataMissing: string[] = [];
-  UKRWheatImportData.forEach((d) => {
-    if (RUSWheatImportData.findIndex((el) => el.country === d.country) === -1) WheatDataMissing.push(d.country);
-  });
-  const WheatData = RUSWheatImportData.map((d) => {
-    const totalImp = totalWheatImportData[totalWheatImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
-    const ukrValue = UKRWheatImportData.findIndex((el) => el.country === d.country) !== -1 ? UKRWheatImportData[UKRWheatImportData.findIndex((el) => el.country === d.country)].value : 0;
-    return {
-      country: d.country,
-      rusValue: d.value,
-      ukrValue,
-      rusPercent,
-      ukrPercent: (ukrValue * 100) / totalImp,
-    };
-  });
-
-  WheatDataMissing.forEach((d) => {
-    const indx = UKRWheatImportData.findIndex((el) => el.country === d);
-    const totalImp = totalWheatImportData[totalWheatImportData.findIndex((el) => el.country === d)].value;
-    WheatData.push({
-      country: d,
-      rusValue: 0,
-      ukrValue: UKRWheatImportData[indx].value,
-      rusPercent: 0,
-      ukrPercent: (UKRWheatImportData[indx].value * 100) / totalImp,
-    });
-  });
-
-  const SunflowerDataMissing: string[] = [];
-  UKRSunflowerImportData.forEach((d) => {
-    if (RUSSunflowerImportData.findIndex((el) => el.country === d.country) === -1) SunflowerDataMissing.push(d.country);
-  });
-  const SunflowerData = RUSSunflowerImportData.map((d) => {
-    const totalImp = totalSunflowerImportData[totalSunflowerImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
-    const ukrValue = UKRSunflowerImportData.findIndex((el) => el.country === d.country) !== -1 ? UKRSunflowerImportData[UKRSunflowerImportData.findIndex((el) => el.country === d.country)].value : 0;
-    return {
-      country: d.country,
-      rusValue: d.value,
-      ukrValue,
-      rusPercent,
-      ukrPercent: (ukrValue * 100) / totalImp,
-    };
-  });
-
-  SunflowerDataMissing.forEach((d) => {
-    const indx = UKRSunflowerImportData.findIndex((el) => el.country === d);
-    const totalImp = totalSunflowerImportData[totalSunflowerImportData.findIndex((el) => el.country === d)].value;
-    SunflowerData.push({
-      country: d,
-      rusValue: 0,
-      ukrValue: UKRSunflowerImportData[indx].value,
-      rusPercent: 0,
-      ukrPercent: (UKRSunflowerImportData[indx].value * 100) / totalImp,
-    });
-  });
+  const CerealData: DataType[] = formatData(totalCerealImportData, UKRCerealImportData, RUSCerealImportData);
+  const MaizeData: DataType[] = formatData(totalMaizeImportData, UKRMaizeImportData, RUSMaizeImportData);
+  const WheatData: DataType[] = formatData(totalWheatImportData, UKRWheatImportData, RUSWheatImportData);
+  const SunflowerData: DataType[] = formatData(totalSunflowerImportData, UKRSunflowerImportData, RUSSunflowerImportData);
 
   const colorArray = ['#fafafa', '#ffffd9', '#e4f4cb', '#c4e6c3', '#9dd4c0', '#69c1c1', '#3ea2bd', '#347cab', '#265994', '#173978', '#081d58'];
   const domain = [0.0001, 10, 20, 30, 40, 50, 60, 70, 80, 90];
@@ -168,36 +153,61 @@ export const ChoroplethMap = () => {
   return (
     <El>
       <SelectEl>
-        <Select
-          showSearch
-          style={
-          {
-            fontSize: '1.6rem',
-            fontWeight: 'bold',
-            minWidth: '25%',
-            marginRight: '2rem',
+        <div>
+          <div>
+            <OptionTitle>
+              Select Item
+            </OptionTitle>
+          </div>
+          <Select
+            showSearch
+            value={productGroup}
+            size='middle'
+            onChange={(d) => { setProductGroup(d); }}
+          >
+            {
+            options.map((d) => (
+              <Select.Option key={d}>{d}</Select.Option>
+            ))
           }
-        }
-          value={productGroup}
-          size='middle'
-          onChange={(d) => { setProductGroup(d); }}
-        >
-          {
-          options.map((d) => (
-            <Select.Option key={d}>{d}</Select.Option>
-          ))
-        }
-        </Select>
-        <Radio.Group
-          defaultValue='Both'
-          buttonStyle='solid'
-          size='middle'
-          onChange={(e) => { setCountry(e.target.value); }}
-        >
-          <Radio.Button value='Both'>Imports from Both</Radio.Button>
-          <Radio.Button value='Ukraine'>Imports from Ukraine</Radio.Button>
-          <Radio.Button value='Russia'>Imports from Russia</Radio.Button>
-        </Radio.Group>
+          </Select>
+        </div>
+        <RightContainer>
+          <div>
+            <div>
+              <OptionTitle>
+                Select Year
+              </OptionTitle>
+            </div>
+            <Radio.Group
+              defaultValue='2020'
+              buttonStyle='solid'
+              size='middle'
+              onChange={(e) => { setYear(e.target.value); }}
+            >
+              <Radio.Button value='2018'>2018</Radio.Button>
+              <Radio.Button value='2019'>2019</Radio.Button>
+              <Radio.Button value='2020'>2020</Radio.Button>
+            </Radio.Group>
+          </div>
+          <RightEl>
+            <div>
+              <OptionTitle>
+                Select Export Country
+              </OptionTitle>
+            </div>
+            <Radio.Group
+              defaultValue='Both'
+              buttonStyle='solid'
+              size='middle'
+              onChange={(e) => { setCountry(e.target.value); }}
+            >
+              <Radio.Button value='Both'>Imports from Both</Radio.Button>
+              <Radio.Button value='Ukraine'>Imports from UKR</Radio.Button>
+              <Radio.Button value='Russia'>Imports from RUS</Radio.Button>
+            </Radio.Group>
+          </RightEl>
+        </RightContainer>
       </SelectEl>
       <svg width='100%' viewBox={`0 0 ${svgWidth} ${svgHeight}`} ref={mapSvg}>
         <g ref={mapG}>
@@ -212,10 +222,11 @@ export const ChoroplethMap = () => {
                     country: d.properties.NAME,
                     productGroup,
                     exporter: country,
-                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrValue + data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : country === 'Ukraine' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrValue) : (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : 0,
-                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrPercent + data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : country === 'Ukraine' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrPercent) : (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : 0,
+                    value: data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrValue + data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusValue) : country === 'Ukraine' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrValue) : (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusValue) : 0,
+                    percent: data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrPercent + data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusPercent) : country === 'Ukraine' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrPercent) : (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusPercent) : 0,
                     xPosition: event.clientX,
                     yPosition: event.clientY,
+                    year,
                   });
                 }}
                 onMouseMove={(event) => {
@@ -223,11 +234,12 @@ export const ChoroplethMap = () => {
                     countryISO: d.properties.ISO3,
                     country: d.properties.NAME,
                     exporter: country,
-                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrValue + data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : country === 'Ukraine' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrValue) : (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : 0,
-                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrPercent + data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : country === 'Ukraine' ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].ukrPercent) : (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : 0,
+                    value: data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrValue + data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusValue) : country === 'Ukraine' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrValue) : (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusValue) : 0,
+                    percent: data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME) !== -1 ? country === 'Both' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrPercent + data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusPercent) : country === 'Ukraine' ? (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].ukrPercent) : (data[data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME)].value[year].rusPercent) : 0,
                     xPosition: event.clientX,
                     yPosition: event.clientY,
                     productGroup,
+                    year,
                   });
                 }}
                 onMouseLeave={() => {
@@ -246,8 +258,8 @@ export const ChoroplethMap = () => {
                         });
                         masterPath += path;
                       });
-                      const indx = data.findIndex((d1) => d1.country === d.properties.NAME);
-                      const color = indx === -1 ? '#fafafa' : country === 'Both' ? colorScale(data[indx].ukrPercent + data[indx].rusPercent) : country === 'Ukraine' ? colorScale(data[indx].ukrPercent) : colorScale(data[indx].rusPercent);
+                      const indx = data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME);
+                      const color = indx === -1 ? '#fafafa' : country === 'Both' ? colorScale(data[indx].value[year].ukrPercent + data[indx].value[year].rusPercent) : country === 'Ukraine' ? colorScale(data[indx].value[year].ukrPercent) : colorScale(data[indx].value[year].rusPercent);
                       return (
                         <path
                           key={j}
@@ -266,8 +278,8 @@ export const ChoroplethMap = () => {
                         if (k !== el.length - 1) path = `${path}${point[0]} ${point[1]}L`;
                         else path = `${path}${point[0]} ${point[1]}`;
                       });
-                      const indx = data.findIndex((d1) => d1.country === d.properties.NAME);
-                      const color = indx === -1 ? '#fafafa' : country === 'Both' ? colorScale(data[indx].ukrPercent + data[indx].rusPercent) : country === 'Ukraine' ? colorScale(data[indx].ukrPercent) : colorScale(data[indx].rusPercent);
+                      const indx = data.findIndex((d1: { country: any; }) => d1.country === d.properties.NAME);
+                      const color = indx === -1 ? '#fafafa' : country === 'Both' ? colorScale(data[indx].value[year].ukrPercent + data[indx].value[year].rusPercent) : country === 'Ukraine' ? colorScale(data[indx].value[year].ukrPercent) : colorScale(data[indx].value[year].rusPercent);
                       return (
                         <path
                           key={j}

@@ -4,11 +4,11 @@ import {
 import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { scaleThreshold } from 'd3-scale';
-import { Select } from 'antd';
-import RUSPetroOilImportData from './Data/rusPetroOilExport.json';
-import totalPetroOilImportData from './Data/totalPetroOilImportData.json';
-import RUSPetroGasImportData from './Data/rusPetroGasExport.json';
-import totalPetroGasImportData from './Data/totalPetroGasImportData.json';
+import { Radio, Select } from 'antd';
+import RUSPetroOilImportData from './Data/RussiaExport/CrudeOil.json';
+import totalPetroOilImportData from './Data/TotalImports/CrudeOil.json';
+import RUSPetroGasImportData from './Data/RussiaExport/PetroGas.json';
+import totalPetroGasImportData from './Data/TotalImports/PetroGas.json';
 import WorldMap from './Data/worldFull.json';
 import 'antd/dist/antd.css';
 import { ChoroplethHoverDataType } from './Types';
@@ -21,6 +21,26 @@ const El = styled.div`
 const SelectEl = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+`;
+
+const OptionTitle = styled.div`
+  font-size: 1.4rem;
+`;
+
+const RightContainer = styled.div`
+  display: flex;
+  div:first-of-type{
+    margin-right: 2rem;
+  }
+  @media (max-width: 1024px) {
+    margin-top: 2rem;
+  }
+  @media (max-width: 700px) {
+    flex-wrap: wrap;
+  }
+
 `;
 
 export const PetroChoroplethMap = () => {
@@ -30,27 +50,60 @@ export const PetroChoroplethMap = () => {
   const mapG = useRef<SVGGElement>(null);
   const [hoverData, setHoverData] = useState<ChoroplethHoverDataType | undefined>(undefined);
   const [productGroup, setProductGroup] = useState('Petroleaum Oil, Crude');
+  const [year, setYear] = useState<'2018' | '2019' | '2020'>('2020');
 
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
 
   const projection = geoEqualEarth().rotate([0, 0]).scale(200).translate([450, 300]);
 
   const PetroOilData = RUSPetroOilImportData.map((d) => {
-    const totalImp = totalPetroOilImportData[totalPetroOilImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
+    const totalImp2018 = totalPetroOilImportData[totalPetroOilImportData.findIndex((el) => el.country === d.country)]['2018'];
+    const rusPercent2018 = totalImp2018 === 0 ? 0 : (d['2018'] * 100) / totalImp2018;
+    const totalImp2019 = totalPetroOilImportData[totalPetroOilImportData.findIndex((el) => el.country === d.country)]['2019'];
+    const rusPercent2019 = totalImp2019 === 0 ? 0 : (d['2019'] * 100) / totalImp2019;
+    const totalImp2020 = totalPetroOilImportData[totalPetroOilImportData.findIndex((el) => el.country === d.country)]['2020'];
+    const rusPercent2020 = totalImp2020 === 0 ? 0 : (d['2020'] * 100) / totalImp2020;
     return {
       country: d.country,
-      rusValue: d.value,
-      rusPercent,
+      value: {
+        2018: {
+          rusValue: d['2018'],
+          rusPercent: rusPercent2018,
+        },
+        2019: {
+          rusValue: d['2019'],
+          rusPercent: rusPercent2019,
+        },
+        2020: {
+          rusValue: d['2020'],
+          rusPercent: rusPercent2020,
+        },
+      },
     };
   });
   const PetroGasData = RUSPetroGasImportData.map((d) => {
-    const totalImp = totalPetroGasImportData[totalPetroGasImportData.findIndex((el) => el.country === d.country)].value;
-    const rusPercent = (d.value * 100) / totalImp;
+    const totalImp2018 = totalPetroGasImportData[totalPetroGasImportData.findIndex((el) => el.country === d.country)]['2018'];
+    const rusPercent2018 = totalImp2018 === 0 ? 0 : (d['2018'] * 100) / totalImp2018;
+    const totalImp2019 = totalPetroGasImportData[totalPetroGasImportData.findIndex((el) => el.country === d.country)]['2019'];
+    const rusPercent2019 = totalImp2019 === 0 ? 0 : (d['2019'] * 100) / totalImp2019;
+    const totalImp2020 = totalPetroGasImportData[totalPetroGasImportData.findIndex((el) => el.country === d.country)]['2020'];
+    const rusPercent2020 = totalImp2020 === 0 ? 0 : (d['2020'] * 100) / totalImp2020;
     return {
       country: d.country,
-      rusValue: d.value,
-      rusPercent,
+      value: {
+        2018: {
+          rusValue: d['2018'],
+          rusPercent: rusPercent2018,
+        },
+        2019: {
+          rusValue: d['2019'],
+          rusPercent: rusPercent2019,
+        },
+        2020: {
+          rusValue: d['2020'],
+          rusPercent: rusPercent2020,
+        },
+      },
     };
   });
   const colorArray = ['#fafafa', '#ffffd9', '#e4f4cb', '#c4e6c3', '#9dd4c0', '#69c1c1', '#3ea2bd', '#347cab', '#265994', '#173978', '#081d58'];
@@ -61,26 +114,44 @@ export const PetroChoroplethMap = () => {
   return (
     <El>
       <SelectEl>
-        <Select
-          showSearch
-          style={
-          {
-            fontSize: '1.6rem',
-            fontWeight: 'bold',
-            minWidth: '25%',
-            marginRight: '2rem',
+        <div>
+          <div>
+            <OptionTitle>
+              Select Item
+            </OptionTitle>
+          </div>
+          <Select
+            showSearch
+            value={productGroup}
+            size='middle'
+            onChange={(d) => { setProductGroup(d); }}
+          >
+            {
+            options.map((d) => (
+              <Select.Option key={d}>{d}</Select.Option>
+            ))
           }
-        }
-          value={productGroup}
-          size='middle'
-          onChange={(d) => { setProductGroup(d); }}
-        >
-          {
-          options.map((d) => (
-            <Select.Option key={d}>{d}</Select.Option>
-          ))
-        }
-        </Select>
+          </Select>
+        </div>
+        <RightContainer>
+          <div>
+            <div>
+              <OptionTitle>
+                Select Year
+              </OptionTitle>
+            </div>
+            <Radio.Group
+              defaultValue='2020'
+              buttonStyle='solid'
+              size='middle'
+              onChange={(e) => { setYear(e.target.value); }}
+            >
+              <Radio.Button value='2018'>2018</Radio.Button>
+              <Radio.Button value='2019'>2019</Radio.Button>
+              <Radio.Button value='2020'>2020</Radio.Button>
+            </Radio.Group>
+          </div>
+        </RightContainer>
       </SelectEl>
       <svg width='100%' viewBox={`0 0 ${svgWidth} ${svgHeight}`} ref={mapSvg}>
         <g ref={mapG}>
@@ -95,10 +166,11 @@ export const PetroChoroplethMap = () => {
                     country: d.properties.NAME,
                     productGroup,
                     exporter: 'Russia',
-                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : 0,
-                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : 0,
+                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].value[year].rusValue) : 0,
+                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].value[year].rusPercent) : 0,
                     xPosition: event.clientX,
                     yPosition: event.clientY,
+                    year,
                   });
                 }}
                 onMouseMove={(event) => {
@@ -106,11 +178,12 @@ export const PetroChoroplethMap = () => {
                     countryISO: d.properties.ISO3,
                     country: d.properties.NAME,
                     exporter: 'Russia',
-                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusValue) : 0,
-                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].rusPercent) : 0,
+                    value: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].value[year].rusValue) : 0,
+                    percent: data.findIndex((d1) => d1.country === d.properties.NAME) !== -1 ? (data[data.findIndex((d1) => d1.country === d.properties.NAME)].value[year].rusPercent) : 0,
                     xPosition: event.clientX,
                     yPosition: event.clientY,
                     productGroup,
+                    year,
                   });
                 }}
                 onMouseLeave={() => {
@@ -130,7 +203,7 @@ export const PetroChoroplethMap = () => {
                         masterPath += path;
                       });
                       const indx = data.findIndex((d1) => d1.country === d.properties.NAME);
-                      const color = indx === -1 ? '#fafafa' : colorScale(data[indx].rusPercent);
+                      const color = indx === -1 ? '#fafafa' : colorScale(data[indx].value[year].rusPercent);
                       return (
                         <path
                           key={j}
@@ -150,7 +223,7 @@ export const PetroChoroplethMap = () => {
                         else path = `${path}${point[0]} ${point[1]}`;
                       });
                       const indx = data.findIndex((d1) => d1.country === d.properties.NAME);
-                      const color = indx === -1 ? '#fafafa' : colorScale(data[indx].rusPercent);
+                      const color = indx === -1 ? '#fafafa' : colorScale(data[indx].value[year].rusPercent);
                       return (
                         <path
                           key={j}

@@ -42,7 +42,6 @@ const GlobalStyle = createGlobalStyle`
     margin: 0;
     padding: 0 2rem;
     font-size: 1.6rem;
-    font-weight: 500;
     line-height: 2.56rem;
   }
 
@@ -111,17 +110,23 @@ const GlobalStyle = createGlobalStyle`
     white-space: normal;
   }
 
+  .ant-select {
+    width: 32rem !important;
+    @media (max-width: 1024px) {
+      width: calc(100vw - 60px) !important;
+    }
+  }
+
   .ant-select-selector {
-    border-radius: 0.5rem !important;
-    background-color: var(--blue-very-light) !important;
-    border: 1px solid var(--primary-blue) !important;
-    color: var(--primary-blue) !important;
+    border-radius: 0.1rem !important;
+    background-color: var(--black-100) !important;
+    border: 1px solid var(--black-500) !important;
   }
 
   .ant-select-selection-item{
-    font-size: 2rem !important;
-    font-weight: 'medium';
+    font-size: 1.8rem !important;
   }
+
   @-webkit-keyframes dash {
     to {
       stroke-dashoffset: 1000;
