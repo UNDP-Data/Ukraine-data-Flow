@@ -18,23 +18,36 @@ const El = styled.div`
   width: 100%;
 `;
 
-const SettingEl = styled.div`
+const SelectEl = styled.div`
   display: flex;
-  align-items: center;
-  margin: 2rem 0;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
 `;
 
-const RadioEl = styled.div`
-  display: flex;
-  align-items: center;
+const OptionTitle = styled.div`
+  font-size: 1.4rem;
 `;
-const HeadingEl = styled.div`
-  font-size: 2.4rem;
-  font-weight: bold;
-  line-height: 2.4rem;
-  text-align: center;
-  margin: 5rem 0 3rem 0;
+
+const RightContainer = styled.div`
+  display: flex;
+  div:first-of-type{
+    margin-right: 2rem;
+  }
+  @media (max-width: 1024px) {
+    margin-top: 2rem;
+  }
+  @media (max-width: 700px) {
+    flex-wrap: wrap;
+  }
+
+`;
+
+const RightEl = styled.div`
+  @media (max-width: 700px) {
+    margin-top: 2rem;
+  }
 `;
 
 const NEIGHBOURS = [
@@ -71,64 +84,61 @@ export const FlowMap = () => {
 
   return (
     <El>
-      <SettingEl>
-        <Select
-          showSearch
-          style={
+      <SelectEl>
+        <div>
+          <div>
+            <OptionTitle>
+              Select Item
+            </OptionTitle>
+          </div>
+          <Select
+            showSearch
+            value={productGroup}
+            size='middle'
+            onChange={(d) => { setProductGroup(d); }}
+          >
             {
-              minWidth: '25%',
-              marginRight: '20px',
-              fontSize: '1.6rem',
-              fontWeight: 'bold',
+              options.map((d) => (
+                <Select.Option key={d}>{d}</Select.Option>
+              ))
             }
-          }
-          value={productGroup}
-          size='middle'
-          onChange={(d) => { setProductGroup(d); }}
-        >
-          {
-            options.map((d) => (
-              <Select.Option key={d}>{d}</Select.Option>
-            ))
-          }
-        </Select>
-        <RadioEl>
-          <Radio.Group
-            defaultValue='Neighbours'
-            buttonStyle='solid'
-            size='middle'
-            onChange={(e) => { setRegionType(e.target.value); }}
-            style={
-              {
-                marginRight: '20px',
-              }
-            }
-          >
-            <Radio.Button value='Neighbours'>Neighbouring Countries</Radio.Button>
-            <Radio.Button value='Region'>Countries in Region</Radio.Button>
-          </Radio.Group>
-          <Radio.Group
-            defaultValue='Exports'
-            buttonStyle='solid'
-            size='middle'
-            onChange={(e) => { setTradeType(e.target.value); }}
-          >
-            <Radio.Button value='Exports'>Exports from Ukraine</Radio.Button>
-            <Radio.Button value='Imports'>Imports to Ukraine</Radio.Button>
-          </Radio.Group>
-        </RadioEl>
-      </SettingEl>
-      <HeadingEl>
-        Ukraine
-        {' '}
-        {tradeType === 'Exports' ? 'Exports of' : 'Imports of'}
-        {' '}
-        {productGroup}
-        {' '}
-        {tradeType === 'Exports' ? 'to' : 'from'}
-        {' '}
-        {regionType === 'Region' ? 'the Region' : 'the Neighbouring Countries'}
-      </HeadingEl>
+          </Select>
+        </div>
+        <RightContainer>
+          <div>
+            <div>
+              <OptionTitle>
+                Select Region
+              </OptionTitle>
+            </div>
+            <Radio.Group
+              defaultValue='Neighbours'
+              buttonStyle='solid'
+              size='middle'
+              onChange={(e) => { setRegionType(e.target.value); }}
+            >
+              <Radio.Button value='Neighbours'>Neighbouring Countries</Radio.Button>
+              <Radio.Button value='Region'>Countries in Region</Radio.Button>
+            </Radio.Group>
+          </div>
+          <RightEl>
+            <div>
+              <OptionTitle>
+                Select Trade Type
+              </OptionTitle>
+            </div>
+            <Radio.Group
+              defaultValue='Exports'
+              buttonStyle='solid'
+              size='middle'
+              onChange={(e) => { setTradeType(e.target.value); }}
+            >
+              <Radio.Button value='Exports'>Exports from Ukraine</Radio.Button>
+              <Radio.Button value='Imports'>Imports to Ukraine</Radio.Button>
+            </Radio.Group>
+          </RightEl>
+        </RightContainer>
+      </SelectEl>
       <svg width='100%' viewBox={`0 0 ${svgWidth} ${svgHeight}`} ref={mapSvg}>
         <defs>
           <marker
