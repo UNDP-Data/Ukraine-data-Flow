@@ -1,10 +1,13 @@
 import {
+  useEffect,
   useRef, useState,
 } from 'react';
 import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { scaleThreshold } from 'd3-scale';
 import { Radio, Select } from 'antd';
+import { zoom } from 'd3-zoom';
+import { select } from 'd3-selection';
 import RUSPetroOilImportData from './Data/RussiaExport/CrudeOil.json';
 import totalPetroOilImportData from './Data/TotalImports/CrudeOil.json';
 import RUSPetroGasImportData from './Data/RussiaExport/PetroGas.json';
@@ -111,6 +114,18 @@ export const PetroChoroplethMap = () => {
   const colorScale = scaleThreshold<number, string>().domain(domain).range(colorArray);
   const options = ['Petroleaum Oil, Crude', 'Petroleum Gas and Other Gaseous HydroCarbons'];
   const data = productGroup === 'Petroleaum Oil, Crude' ? PetroOilData : PetroGasData;
+  useEffect(() => {
+    const mapGSelect = select(mapG.current);
+    const mapSvgSelect = select(mapSvg.current);
+    const zoomBehaviour = zoom()
+      .scaleExtent([0.8, 6])
+      .translateExtent([[-20, 0], [svgWidth + 20, svgHeight]])
+      .on('zoom', ({ transform }) => {
+        mapGSelect.attr('transform', transform);
+      });
+    mapSvgSelect.call(zoomBehaviour as any);
+  }, [svgHeight, svgWidth]);
+
   return (
     <El>
       <SelectEl>
@@ -209,8 +224,7 @@ export const PetroChoroplethMap = () => {
                           key={j}
                           d={masterPath}
                           stroke='#ddd'
-                          strokeWidth={1}
-                          strokeOpacity={0.5}
+                          strokeWidth={0.5}
                           opacity={!selectedColor ? 1 : selectedColor === color ? 1 : 0.1}
                           fill={d.properties.ISO3 !== 'RUS' ? color : 'rgb(24, 144, 255)'}
                         />
@@ -229,8 +243,7 @@ export const PetroChoroplethMap = () => {
                           key={j}
                           d={path}
                           stroke='#ddd'
-                          strokeWidth={1}
-                          strokeOpacity={0.5}
+                          strokeWidth={0.5}
                           opacity={!selectedColor ? 1 : selectedColor === color ? 1 : 0.1}
                           fill={d.properties.ISO3 !== 'RUS' ? color : 'rgb(24, 144, 255)'}
                         />

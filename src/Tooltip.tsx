@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import orderBy from 'lodash.orderby';
 import { format } from 'd3-format';
 import Data from './Data/data.json';
 import { HoverDataType } from './Types';
@@ -45,7 +44,7 @@ const TooltipTitle = styled.div`
 const TooltipBody = styled.div`
   width: 100%;
   box-sizing: border-box;
-  padding: 2rem;
+  padding: 2rem 2rem 0 2rem;
 `;
 
 const TooltipHead = styled.div`
@@ -59,35 +58,11 @@ const BodyTitleEl = styled.div`
   line-height: 2.2rem;
 `;
 
-const CopyEl = styled.div`
-  font-size: 1.6rem;
-  line-height: 2.2rem;
-`;
-
 const ValueDiv = styled.div`
   font-size: 1.8rem;
   font-weight: bold;
   color: var(--primary-blue);
-  padding-bottom: 1rem;
   margin: 0 0 2rem 0;
-  border-bottom: 1px solid var(--black-450);
-`;
-
-const RowEl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.4rem;
-  line-height: 2.2rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--black-300);
-`;
-
-const TableTitleEl = styled.div`
-  font-size: 1.2rem;
-  text-transform: uppercase;
-  line-height: 1.6rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
 `;
 
 export const Tooltip = (props: Props) => {
@@ -95,10 +70,6 @@ export const Tooltip = (props: Props) => {
     data,
   } = props;
   const dataSelectedCategory = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] === data.productGroup);
-  const dataAllProducts = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] === 'All Products');
-  const dataCategories = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] !== 'All Products');
-  const dataSorted = orderBy(dataCategories, data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)', 'desc').filter((d, i) => i < 5);
-  const percent = (dataSelectedCategory[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 100) / dataAllProducts[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'];
   return (
     <TooltipEl x={data.xPosition} y={data.yPosition}>
       <TooltipHead>
@@ -119,44 +90,6 @@ export const Tooltip = (props: Props) => {
         <ValueDiv>
           {format('$.4s')(dataSelectedCategory[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 1000).replace('G', 'B')}
         </ValueDiv>
-        {
-          data.productGroup === 'All Products' ? (
-            <div>
-              <TableTitleEl>
-                Top 5
-                {' '}
-                {data.tradeType === 'Imports' ? 'export' : 'import'}
-                {' '}
-                product category
-              </TableTitleEl>
-              {
-                dataSorted.map((d) => (
-                  <RowEl>
-                    <div>{d['Product Group']}</div>
-                    <div className='bold'>{format('$.4s')(d[data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 1000).replace('G', 'B')}</div>
-                  </RowEl>
-                ))
-              }
-            </div>
-          ) : (
-            <CopyEl>
-              {data.productGroup}
-              {' '}
-              makes
-              {' '}
-              <span className='bold'>
-                { percent < 1 ? percent.toFixed(2) : format('.3s')(percent)}
-                %
-              </span>
-              {' '}
-              of the total
-              {' '}
-              {data.tradeType === 'Imports' ? 'exports to' : 'imports from'}
-              {' '}
-              Ukraine
-            </CopyEl>
-          )
-        }
       </TooltipBody>
     </TooltipEl>
   );

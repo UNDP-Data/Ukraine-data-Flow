@@ -1,9 +1,12 @@
 import {
+  useEffect,
   useRef, useState,
 } from 'react';
 import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
+import { zoom } from 'd3-zoom';
 import { scaleThreshold } from 'd3-scale';
+import { select } from 'd3-selection';
 import { Radio, Select } from 'antd';
 import UKRCerealImportData from './Data/UkraineExports/AllCereals.json';
 import RUSCerealImportData from './Data/RussiaExport/AllCereals.json';
@@ -150,6 +153,19 @@ export const ChoroplethMap = () => {
   const colorScale = scaleThreshold<number, string>().domain(domain).range(colorArray);
   const options = ['All Cereals', 'Wheat and Meslin', 'Maize or Corn', 'Sunflower seed, safflower or cotton-seed oil'];
   const data = productGroup === 'All Cereals' ? CerealData : productGroup === 'Wheat and Meslin' ? WheatData : productGroup === 'Maize or Corn' ? MaizeData : SunflowerData;
+
+  useEffect(() => {
+    const mapGSelect = select(mapG.current);
+    const mapSvgSelect = select(mapSvg.current);
+    const zoomBehaviour = zoom()
+      .scaleExtent([0.8, 6])
+      .translateExtent([[-20, 0], [svgWidth + 20, svgHeight]])
+      .on('zoom', ({ transform }) => {
+        mapGSelect.attr('transform', transform);
+      });
+    mapSvgSelect.call(zoomBehaviour as any);
+  }, [svgHeight, svgWidth]);
+
   return (
     <El>
       <SelectEl>
@@ -265,8 +281,7 @@ export const ChoroplethMap = () => {
                           key={j}
                           d={masterPath}
                           stroke='#ddd'
-                          strokeWidth={1}
-                          strokeOpacity={0.5}
+                          strokeWidth={0.5}
                           opacity={!selectedColor ? 1 : selectedColor === color ? 1 : 0.1}
                           fill={country === 'Ukraine' ? d.properties.ISO3 !== 'UKR' ? color : 'rgb(24, 144, 255)' : country === 'Russia' ? d.properties.ISO3 !== 'RUS' ? color : 'rgb(24, 144, 255)' : d.properties.ISO3 !== 'RUS' && d.properties.ISO3 !== 'UKR' ? color : 'rgb(24, 144, 255)'}
                         />
@@ -285,8 +300,7 @@ export const ChoroplethMap = () => {
                           key={j}
                           d={path}
                           stroke='#ddd'
-                          strokeWidth={1}
-                          strokeOpacity={0.5}
+                          strokeWidth={0.5}
                           opacity={!selectedColor ? 1 : selectedColor === color ? 1 : 0.1}
                           fill={country === 'Ukraine' ? d.properties.ISO3 !== 'UKR' ? color : 'rgb(24, 144, 255)' : country === 'Russia' ? d.properties.ISO3 !== 'RUS' ? color : 'rgb(24, 144, 255)' : d.properties.ISO3 !== 'RUS' && d.properties.ISO3 !== 'UKR' ? color : 'rgb(24, 144, 255)'}
                         />
