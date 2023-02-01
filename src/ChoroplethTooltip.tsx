@@ -36,7 +36,7 @@ export const ChoroplethTooltip = (props: Props) => {
       {
         data.countryISO === 'UKR' || data.countryISO === 'RUS' ? null
           : (
-            <div style={{ padding: 'var(--spacing-05) var(--spacing-05) 0 var(--spacing-05)' }}>
+            <div style={{ padding: 'var(--spacing-05)' }}>
               <h6 className='bold undp-typography'>{data.productGroup}</h6>
               <p className='undp-typography'>
                 {data.exporter === 'Both' ? "Russia's and Ukraine's" : `${data.exporter}'s`}

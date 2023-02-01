@@ -35,7 +35,7 @@ export const Tooltip = (props: Props) => {
         {data.country}
       </h6>
       <hr className='undp-style' />
-      <div style={{ padding: 'var(--spacing-05) var(--spacing-05) 0 var(--spacing-05)' }}>
+      <div style={{ padding: 'var(--spacing-05)' }}>
         <p className='undp-typography margin-bottom-00'>
           Total
           {' '}
