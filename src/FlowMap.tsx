@@ -1,7 +1,6 @@
 import {
   useRef, useState,
 } from 'react';
-import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { scaleLinear, scaleSqrt } from 'd3-scale';
 import sumBy from 'lodash.sumby';
@@ -10,45 +9,8 @@ import { Select, Radio } from 'antd';
 import { format } from 'd3-format';
 import Data from './Data/data.json';
 import World from './Data/worldMap.json';
-import 'antd/dist/antd.css';
 import { HoverDataType } from './Types';
 import { Tooltip } from './Tooltip';
-
-const El = styled.div`
-  width: 100%;
-`;
-
-const SelectEl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-`;
-
-const OptionTitle = styled.div`
-  font-size: 1.4rem;
-`;
-
-const RightContainer = styled.div`
-  display: flex;
-  div:first-of-type{
-    margin-right: 2rem;
-  }
-  @media (max-width: 1024px) {
-    margin-top: 2rem;
-  }
-  @media (max-width: 700px) {
-    flex-wrap: wrap;
-  }
-
-`;
-
-const RightEl = styled.div`
-  @media (max-width: 700px) {
-    margin-top: 2rem;
-  }
-`;
 
 const NEIGHBOURS = [
   'HUN',
@@ -83,62 +45,46 @@ export const FlowMap = () => {
   const UKRCenter = projection([32, 49]) as [number, number];
 
   return (
-    <El>
-      <SelectEl>
-        <div>
-          <div>
-            <OptionTitle>
-              Select Item
-            </OptionTitle>
-          </div>
+    <div>
+      <div className='flex-div flex-space-between flex-wrap margin-bottom-05'>
+        <div style={{ width: '25%', minWidth: '20rem' }}>
+          <p className='label'>Select Item</p>
           <Select
+            className='undp-select'
             showSearch
             value={productGroup}
-            size='middle'
             onChange={(d) => { setProductGroup(d); }}
           >
             {
               options.map((d) => (
-                <Select.Option key={d}>{d}</Select.Option>
+                <Select.Option className='undp-select-option' key={d}>{d}</Select.Option>
               ))
             }
           </Select>
         </div>
-        <RightContainer>
+        <div className='flex-div flex-wrap'>
           <div>
-            <div>
-              <OptionTitle>
-                Select Region
-              </OptionTitle>
-            </div>
+            <p className='label margin-bottom-05'>Select Region</p>
             <Radio.Group
               defaultValue='Neighbours'
-              buttonStyle='solid'
-              size='middle'
               onChange={(e) => { setRegionType(e.target.value); }}
             >
-              <Radio.Button value='Neighbours'>Neighbouring Countries</Radio.Button>
-              <Radio.Button value='Region'>Countries in Region</Radio.Button>
+              <Radio className='undp-radio' value='Neighbours'>Neighbouring Countries</Radio>
+              <Radio className='undp-radio' value='Region'>Countries in Region</Radio>
             </Radio.Group>
           </div>
-          <RightEl>
-            <div>
-              <OptionTitle>
-                Select Trade Type
-              </OptionTitle>
-            </div>
+          <div>
+            <p className='label margin-bottom-05'>Select Trade Type</p>
             <Radio.Group
               defaultValue='Exports'
-              buttonStyle='solid'
-              size='middle'
               onChange={(e) => { setTradeType(e.target.value); }}
             >
-              <Radio.Button value='Exports'>Exports from Ukraine</Radio.Button>
-              <Radio.Button value='Imports'>Imports to Ukraine</Radio.Button>
+              <Radio className='undp-radio' value='Exports'>Exports from Ukraine</Radio>
+              <Radio className='undp-radio' value='Imports'>Imports to Ukraine</Radio>
             </Radio.Group>
-          </RightEl>
-        </RightContainer>
-      </SelectEl>
+          </div>
+        </div>
+      </div>
       <svg width='100%' viewBox={`0 0 ${svgWidth} ${svgHeight}`} ref={mapSvg}>
         <defs>
           <marker
@@ -383,6 +329,6 @@ export const FlowMap = () => {
       {
         hoverData ? <Tooltip data={hoverData} /> : null
       }
-    </El>
+    </div>
   );
 };

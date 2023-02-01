@@ -2,7 +2,6 @@ import {
   useEffect,
   useRef, useState,
 } from 'react';
-import styled from 'styled-components';
 import { geoEqualEarth } from 'd3-geo';
 import { zoom } from 'd3-zoom';
 import { scaleThreshold } from 'd3-scale';
@@ -21,44 +20,8 @@ import UKRSunflowerImportData from './Data/UkraineExports/SunflowerSeeds.json';
 import RUSSunflowerImportData from './Data/RussiaExport/SunflowerSeeds.json';
 import totalSunflowerImportData from './Data/TotalImports/SunflowerSeeds.json';
 import WorldMap from './Data/worldFull.json';
-import 'antd/dist/antd.css';
 import { ChoroplethHoverDataType, DataType, ImportDataType } from './Types';
 import { ChoroplethTooltip } from './ChoroplethTooltip';
-
-const El = styled.div`
-  width: 100%;
-`;
-
-const SelectEl = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-`;
-
-const OptionTitle = styled.div`
-  font-size: 1.4rem;
-`;
-
-const RightContainer = styled.div`
-  display: flex;
-  div:first-of-type{
-    margin-right: 2rem;
-  }
-  @media (max-width: 1024px) {
-    margin-top: 2rem;
-  }
-  @media (max-width: 700px) {
-    flex-wrap: wrap;
-  }
-
-`;
-
-const RightEl = styled.div`
-  @media (max-width: 700px) {
-    margin-top: 2rem;
-  }
-`;
 
 const formatData = (total: ImportDataType[], ukr: ImportDataType[], rus: any) => {
   const dataMissing: string[] = [];
@@ -167,64 +130,48 @@ export const ChoroplethMap = () => {
   }, [svgHeight, svgWidth]);
 
   return (
-    <El>
-      <SelectEl>
-        <div>
-          <div>
-            <OptionTitle>
-              Select Item
-            </OptionTitle>
-          </div>
+    <div>
+      <div className='flex-div flex-space-between flex-wrap margin-bottom-05'>
+        <div style={{ width: '25%', minWidth: '20rem' }}>
+          <p className='label margin-bottom-05'>Select Item</p>
           <Select
+            className='undp-select'
             showSearch
             value={productGroup}
-            size='middle'
             onChange={(d) => { setProductGroup(d); }}
           >
             {
-            options.map((d) => (
-              <Select.Option key={d}>{d}</Select.Option>
-            ))
-          }
+              options.map((d) => (
+                <Select.Option className='undp-select-option' key={d}>{d}</Select.Option>
+              ))
+            }
           </Select>
         </div>
-        <RightContainer>
+        <div className='flex-div flex-wrap'>
           <div>
-            <div>
-              <OptionTitle>
-                Select Year
-              </OptionTitle>
-            </div>
+            <p className='label margin-bottom-05'>Select Year</p>
             <Radio.Group
               defaultValue='2020'
-              buttonStyle='solid'
-              size='middle'
               onChange={(e) => { setYear(e.target.value); }}
             >
-              <Radio.Button value='2018'>2018</Radio.Button>
-              <Radio.Button value='2019'>2019</Radio.Button>
-              <Radio.Button value='2020'>2020</Radio.Button>
+              <Radio className='undp-radio' value='2018'>2018</Radio>
+              <Radio className='undp-radio' value='2019'>2019</Radio>
+              <Radio className='undp-radio' value='2020'>2020</Radio>
             </Radio.Group>
           </div>
-          <RightEl>
-            <div>
-              <OptionTitle>
-                Select Export Country
-              </OptionTitle>
-            </div>
+          <div>
+            <p className='label margin-bottom-05'>Select Export Country</p>
             <Radio.Group
-              defaultValue='Both'
-              buttonStyle='solid'
-              size='middle'
+              defaultValue='Exports'
               onChange={(e) => { setCountry(e.target.value); }}
             >
-              <Radio.Button value='Both'>Imports from Both</Radio.Button>
-              <Radio.Button value='Ukraine'>Imports from UKR</Radio.Button>
-              <Radio.Button value='Russia'>Imports from RUS</Radio.Button>
+              <Radio className='undp-radio' value='Both'>Imports from Both</Radio>
+              <Radio className='undp-radio' value='Ukraine'>Imports from UKR</Radio>
+              <Radio className='undp-radio' value='Russia'>Imports from RUS</Radio>
             </Radio.Group>
-          </RightEl>
-        </RightContainer>
-      </SelectEl>
+          </div>
+        </div>
+      </div>
       <svg width='100%' viewBox={`0 0 ${svgWidth} ${svgHeight}`} ref={mapSvg}>
         <g ref={mapG}>
           {
@@ -389,6 +336,6 @@ export const ChoroplethMap = () => {
       {
         hoverData ? <ChoroplethTooltip data={hoverData} /> : null
       }
-    </El>
+    </div>
   );
 };

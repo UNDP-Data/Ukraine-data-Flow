@@ -1,6 +1,4 @@
-// eslint-disable-next-line no-use-before-define
-import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App, { App1, App2 } from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -17,25 +15,23 @@ const getEl = (embedSelector: string) => {
   return embedSelector;
 };
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  getEl('[data-bucket-embed]'),
-);
-ReactDOM.render(
-  <React.StrictMode>
-    <App1 />
-  </React.StrictMode>,
-  getEl('[map-embed]'),
-);
+const container = getEl('[data-bucket-embed]');
+if (container) {
+  const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+  root.render(<App />);
+}
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App2 />
-  </React.StrictMode>,
-  getEl('[petro-map-embed]'),
-);
+const mapContainer = getEl('[map-embed]');
+if (mapContainer) {
+  const root = createRoot(mapContainer!); // createRoot(container!) if you use TypeScript
+  root.render(<App1 />);
+}
+
+const petroMapContainer = getEl('[petro-map-embed]');
+if (petroMapContainer) {
+  const root = createRoot(petroMapContainer!); // createRoot(container!) if you use TypeScript
+  root.render(<App2 />);
+}
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

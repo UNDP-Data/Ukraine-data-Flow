@@ -15,54 +15,13 @@ interface TooltipElProps {
 const TooltipEl = styled.div<TooltipElProps>`
   display: block;
   position: fixed;
-  z-index: 10;
-  border-radius: 1rem;
-  font-size: 1.4rem;
-  background-color: var(--white);
-  box-shadow: 0 0 1rem rgb(0 0 0 / 15%);
+  z-index: 8;
+  background-color: var(--gray-200);
+  border: 1px solid var(--gray-300);
   word-wrap: break-word;
   top: ${(props) => props.y - 40}px;
   left: ${(props) => props.x + 20}px;
-  max-width: 32rem;
-`;
-
-const TooltipTitle = styled.div`
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: var(--navy);  
-  background: var(--yellow);
-  width: 100%;
-  box-sizing: border-box;
-  border-radius: 1rem 1rem 0 0;
-  padding: 1.6rem 4rem 1.6rem 2rem;
-  position: relative;
-  font-weight: 700;
-  font-size: 1.8rem;
-  line-height: 1.8rem;
-`;
-
-const TooltipBody = styled.div`
-  width: 100%;
-  box-sizing: border-box;
-  padding: 2rem 2rem 0 2rem;
-`;
-
-const TooltipHead = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const BodyTitleEl = styled.div`
-  font-size: 1.4rem;
-  line-height: 2.2rem;
-`;
-
-const ValueDiv = styled.div`
-  font-size: 1.8rem;
-  font-weight: bold;
-  color: var(--primary-blue);
-  margin: 0 0 2rem 0;
+  max-width: 24rem;
 `;
 
 export const Tooltip = (props: Props) => {
@@ -72,13 +31,12 @@ export const Tooltip = (props: Props) => {
   const dataSelectedCategory = Data.filter((d) => d['Alpha-3 code-1'] === data.countryISO && d['Product Group'] === data.productGroup);
   return (
     <TooltipEl x={data.xPosition} y={data.yPosition}>
-      <TooltipHead>
-        <TooltipTitle>
-          {data.country}
-        </TooltipTitle>
-      </TooltipHead>
-      <TooltipBody>
-        <BodyTitleEl>
+      <h6 className='undp-typography margin-top-05 margin-botom-05' style={{ padding: '0 var(--spacing-05)' }}>
+        {data.country}
+      </h6>
+      <hr className='undp-style' />
+      <div style={{ padding: 'var(--spacing-05) var(--spacing-05) 0 var(--spacing-05)' }}>
+        <p className='undp-typography margin-bottom-00'>
           Total
           {' '}
           <span className='bold'>{data.tradeType === 'Imports' ? 'exports to' : 'imports from'}</span>
@@ -86,11 +44,11 @@ export const Tooltip = (props: Props) => {
           Ukraine of
           {' '}
           <span className='bold'>{data.productGroup}</span>
-        </BodyTitleEl>
-        <ValueDiv>
+        </p>
+        <h6 className='undp-typography margin-bottom-00 bold'>
           {format('$.4s')(dataSelectedCategory[0][data.tradeType === 'Imports' ? 'Export (US$ Thousand)' : 'Import (US$ Thousand)'] * 1000).replace('G', 'B')}
-        </ValueDiv>
-      </TooltipBody>
+        </h6>
+      </div>
     </TooltipEl>
   );
 };
