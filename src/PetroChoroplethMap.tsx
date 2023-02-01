@@ -52,7 +52,7 @@ export const PetroChoroplethMap = () => {
   const mapSvg = useRef<SVGSVGElement>(null);
   const mapG = useRef<SVGGElement>(null);
   const [hoverData, setHoverData] = useState<ChoroplethHoverDataType | undefined>(undefined);
-  const [productGroup, setProductGroup] = useState('Petroleaum Oil, Crude');
+  const [productGroup, setProductGroup] = useState('Petroleum Oil, Crude');
   const [year, setYear] = useState<'2018' | '2019' | '2020'>('2020');
 
   const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
@@ -112,8 +112,8 @@ export const PetroChoroplethMap = () => {
   const colorArray = ['#fafafa', '#ffffd9', '#e4f4cb', '#c4e6c3', '#9dd4c0', '#69c1c1', '#3ea2bd', '#347cab', '#265994', '#173978', '#081d58'];
   const domain = [0.0001, 10, 20, 30, 40, 50, 60, 70, 80, 90];
   const colorScale = scaleThreshold<number, string>().domain(domain).range(colorArray);
-  const options = ['Petroleaum Oil, Crude', 'Petroleum Gas and Other Gaseous HydroCarbons'];
-  const data = productGroup === 'Petroleaum Oil, Crude' ? PetroOilData : PetroGasData;
+  const options = ['Petroleum Oil, Crude', 'Petroleum Gas and Other Gaseous HydroCarbons'];
+  const data = productGroup === 'Petroleum Oil, Crude' ? PetroOilData : PetroGasData;
   useEffect(() => {
     const mapGSelect = select(mapG.current);
     const mapSvgSelect = select(mapSvg.current);
