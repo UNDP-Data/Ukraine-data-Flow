@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     stroke-dasharray: 10,1;
   }
 `;
+
 const App = () => (
   <div className='undp-container'>
     <GlobalStyle />
